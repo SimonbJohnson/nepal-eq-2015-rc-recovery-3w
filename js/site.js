@@ -405,7 +405,7 @@ function loadDatatable(){
         var geoDimension = activitycf.dimension(function(d){ return d['#adm3+code']});
         var activityGroup = activityDimension.group().reduceSum(function(d){return d['#meta+count'];});
         var geoGroup =geoDimension.group();
-        var table = '<table><tr><th></th><th class="number damage">Damage</th><th class="number damage">Priority</th>';
+        var table = '<p>The table shows number of VDCs activities are happening in. If two RC societies are working in the same VDC with the same activity it is counted twice.</p><table><tr><th></th><th class="number damage">Damage</th><th class="number damage">Priority</th>';
 
         var geoList = [];
 
