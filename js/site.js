@@ -1,21 +1,20 @@
 //configuration object
 
 var config = {
-    title:"Nepal Earthquake Shelter Cluster Activity Dashboard",
-    description:"Shelter Cluster dashboard showing shelter activities in the 14 priority districts in response to Nepal 2015 Earthquakes. Select a district on the map to view activities happening in that area.  The graphs and map can be clicked to be filtered.  Data can be downloaded from <a target='_blank' href='https://data.hdx.rwlabs.org/dataset/scnepal-agency-data'>HDX</a>.",
+    title:"Nepal Earthquake Red Cross Recovery Dashboard",
+    description:"Red Cross recovery activity in response to Nepal Earthquakes 2015",
     data:"data/data.json",
-    whoFieldName:"#org+implementing",
-    whatFieldName:"#activity+description",
+    whoFieldName:"#org+pns",
+    whatFieldName:"#sector",
     whereFieldName:"#adm4+code",
-    statusFieldName:"#status",
-    groupFieldName:"#reached+households",
-    districtlevelFieldName:"#indicator+parent",
+    statusFieldName:"#indicator+priority",
+    districtlevelFieldName:"#indicator+confirmedvdc",
     geo:"data/nepal_adm3.json",
     joinAttribute:"HLCIT_CODE",
     nameAttribute:"VDC_NAME",
-    color:"#B78C8D",
-    colors:["#DDDDDD","#CAB4B5","#B78C8D","#A46465","#913C3D","#7F1416"],
-    colors2:["#CAB4B5","#B78C8D","#A46465","#913C3D","#7F1416"]
+    color:"#B71C1C",
+    colors:["#DDDDDD","#FFCDD2","#E57373","#F44336","#D32F2F","#B71C1C"],
+    colors2:["#FFCDD2","#E57373","#F44336","#D32F2F","#B71C1C"]
 };
 
 
@@ -38,25 +37,6 @@ function initDash(config,geom){
 
     map.addLayer(baselayer);
 
-    overlay = L.geoJson(geom,{
-        style: function(f){
-            if(f.properties.HUB=='West'){
-                var color = '#7F1416';
-            } else if (f.properties.HUB=='Central') {
-                var color = '#A46465';
-            } else {
-                var color = '#CAB4B5';
-            }
-            return {
-            fillColor: color,
-            color: "#7F1416",
-            weight: 3,
-            opacity: 1,
-            fillOpacity: 0.5};
-        },
-        onEachFeature: onEachFeature
-    }).addTo(map);
-
     var info = L.control();
 
     info.onAdd = function (map) {
@@ -76,61 +56,82 @@ function initDash(config,geom){
 
 function onEachFeature(feature, layer) {
     layer.on('click', function (e){
-        $('#modal').modal('show'); 
-        //suspect e.target.feature.properties.DISTRICT will not work on multi-polygons
-        $('#district_name').html(e.target.feature.properties.DISTRICT);
-        //var url = 'http://beta.proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/export%3Fformat%3Dcsv%26id%3D1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA%26gid%3D0&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23adm3%2Bcode%2C%23adm4%2Bcode%2C%23org%2Bimplementing%2C%23activity%2Bdescription%2C%23status%2C%23reached%2Buse%2C%23indicator&cut-exclude-tags01=&filter02=select&force=1&select-query02-01=adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE
-        var url = 'http://beta.proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/pub%3Fgid%3D0%26single%3Dtrue%26output%3Dcsv&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23adm3%2Bcode%2C%23adm4%2Bcode%2C%23org%2Bimplementing%2C%23activity%2Bdescription%2C%23reached%2Bhouseholds%2C%23status&cut-exclude-tags01=&filter02=select&select-query02-01=%23adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE;
-        var dataCall = $.ajax({ 
-            type: 'GET', 
-            url: url, 
-            dataType: 'json',
-            error:function(e,exception){
-                console.log(exception);
-            }
-        });
-        overlay.setStyle({
-            fillColor: "#7F1416",
-            color: "#7F1416",
-            weight: 3,
-            opacity: 1,
-            fillOpacity: 0.1
-        });
-
-
-        //load geometry
-
-        var geomCall = $.ajax({ 
-            type: 'GET', 
-            url: 'data/'+e.target.feature.properties.DISTRICT+'.json', 
-            dataType: 'json',
-        });
-
-        $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
-            $('#leftcolumn').removeClass('col-sm-12');
-            $('#leftcolumn').addClass('col-sm-8');
-            $('#rightcolumn').removeClass('col-sm-0');
-            $('#rightcolumn').addClass('col-sm-4');
-            $('#overviewtable').hide();
-            map.invalidateSize();
-            $('#info_row').show();
-            var data = hxlProxyToJSON(dataArgs[0])
-            data.forEach(function(d){
-                if(d['#adm4+code']=='') {
-                    d["#indicator+parent"] = 'No';
-                } else {
-                    d["#indicator+parent"] = 'Yes';
+        if(e.target.feature.properties.map=='Yes'){
+            $('#modal').modal('show'); 
+            //suspect e.target.feature.properties.DISTRICT will not work on multi-polygons
+            $('#district_name').html(e.target.feature.properties.DISTRICT);
+            //var url = 'http://beta.proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/export%3Fformat%3Dcsv%26id%3D1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA%26gid%3D0&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23adm3%2Bcode%2C%23adm4%2Bcode%2C%23org%2Bimplementing%2C%23activity%2Bdescription%2C%23status%2C%23reached%2Buse%2C%23indicator&cut-exclude-tags01=&filter02=select&force=1&select-query02-01=adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE
+            var url = 'http://proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1c6QITgxyF0qNs3Kk_7g_04kOwZ9w2stc09pWTupuBm8/edit%23gid%3D0&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23indicator%2Bpriority%2C%23sector%2C%23adm3%2Bcode%2C%23indicator%2Bconfirmedvdc%2C%23adm4%2Bcode%2C%23org%2Bpns&cut-exclude-tags01=&filter02=select&select-query02-01=%23adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE;
+            var dataCall = $.ajax({ 
+                type: 'GET', 
+                url: url, 
+                dataType: 'json',
+                error:function(e,exception){
+                    console.log(exception);
                 }
-            })
-            var geom = topojson.feature(geomArgs[0],geomArgs[0].objects[e.target.feature.properties.DISTRICT]);
-            $('#modal').modal('hide');
-            generate3WComponent(config,data,geom,map)
-        });                    
+            });
+            overlay.setStyle(function(f){
+                if(f.properties.map=='Yes'){
+                    if(f.properties.priority=='A'){
+                        var color = '#FFCDD2';
+                    } else {
+                        var color = '#FFCDD2';
+                    }                    
+                } else {
+                    if(f.properties.priority=='A'){
+                        var color = '#555555';
+                    } else {
+                        var color = '#555555';
+                    }                                      
+                }
+
+                return {
+                fillColor: color,
+                color: "#7F1416",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.2};
+            });
+
+
+            //load geometry
+
+            var geomCall = $.ajax({ 
+                type: 'GET', 
+                url: 'data/'+e.target.feature.properties.DISTRICT+'.json', 
+                dataType: 'json',
+            });
+
+            $.when(dataCall, geomCall).then(function(dataArgs, geomArgs){
+                /*$('#leftcolumn').removeClass('col-sm-12');
+                $('#leftcolumn').addClass('col-sm-8');
+                $('#rightcolumn').removeClass('col-sm-0');
+                $('#rightcolumn').addClass('col-sm-4');*/
+                $('#overviewtable').hide();
+                map.invalidateSize();
+                $('#info_row').show();
+                var data = hxlProxyToJSON(dataArgs[0])
+                data.forEach(function(d){
+                    if(d['#adm4+code']=='') {
+                        d["#indicator+parent"] = 'No';
+                    } else {
+                        d["#indicator+parent"] = 'Yes';
+                    }
+                })
+                var geom = topojson.feature(geomArgs[0],geomArgs[0].objects[e.target.feature.properties.DISTRICT]);
+                $('#modal').modal('hide');
+                generate3WComponent(config,data,geom,map)
+            });
+        }                    
     });
 
     layer.on('mouseover', function(e){
-        $('.hdx-3w-info').html('Click to view '+e.target.feature.properties.DISTRICT);
-        $('.adm'+e.target.feature.properties['HLCIT_CODE'].replace(/ /g,'_')).addClass('highlight');
+        if(e.target.feature.properties.map=='Yes'){
+            $('.hdx-3w-info').html('Click to view '+e.target.feature.properties.DISTRICT);
+            $('.adm'+e.target.feature.properties['HLCIT_CODE'].replace(/ /g,'_')).addClass('highlight');
+        } else {
+            $('.hdx-3w-info').html('No activity in '+e.target.feature.properties.DISTRICT);
+        }
     })
 
     layer.on('mouseout', function(e){
@@ -156,7 +157,7 @@ function generate3WComponent(config,data,geom,map){
 
     var whoChart = dc.rowChart('#rc-3W-who');
     var whatChart = dc.rowChart('#rc-3W-what');
-    var statusChart = dc.rowChart('#rc-3W-status');
+    //var statusChart = dc.rowChart('#rc-3W-status');
     var districtlevelChart = dc.pieChart('#rc-3W-districtlevel');
     var whereChart = dc.leafletChoroplethChart('#rc-3W-where');
 
@@ -164,15 +165,15 @@ function generate3WComponent(config,data,geom,map){
 
     var whoDimension = cf.dimension(function(d){ return d[config.whoFieldName]; });
     var whatDimension = cf.dimension(function(d){ return d[config.whatFieldName]; });
-    var statusDimension = cf.dimension(function(d){ return d[config.statusFieldName]; });
+    //var statusDimension = cf.dimension(function(d){ return d[config.statusFieldName]; });
     var districtlevelDimension = cf.dimension(function(d){ return d[config.districtlevelFieldName];});
 
     var whereDimension = cf.dimension(function(d){ return d[config.whereFieldName]; });
 
-    var whoGroup = whoDimension.group().reduceSum(function(d) {return d[config.groupFieldName];});
-    var whatGroup = whatDimension.group().reduceSum(function(d) {return d[config.groupFieldName];});
-    var statusGroup = statusDimension.group().reduceSum(function(d) {return d[config.groupFieldName];});
-    var districtlevelGroup = districtlevelDimension.group().reduceSum(function(d) {return d[config.groupFieldName];});
+    var whoGroup = whoDimension.group();
+    var whatGroup = whatDimension.group();
+    //var statusGroup = statusDimension.group();
+    var districtlevelGroup = districtlevelDimension.group();
     /*var whereGroup = whereDimension.group().reduce(
         function (p, d) {
             console.log(d);
@@ -195,7 +196,7 @@ function generate3WComponent(config,data,geom,map){
 
     var all = cf.groupAll();
 
-    whoChart.width($('#rc-3W-who').width()).height(750)
+    whoChart.width($('#rc-3W-who').width()).height(250)
             .dimension(whoDimension)
             .group(whoGroup)
             .elasticX(true)
@@ -207,7 +208,7 @@ function generate3WComponent(config,data,geom,map){
             })            
             .xAxis().ticks(5);
 
-    whatChart.width($('#rc-3W-what').width()).height(300)
+    whatChart.width($('#rc-3W-what').width()).height(250)
             .dimension(whatDimension)
             .group(whatGroup)
             .elasticX(true)
@@ -219,7 +220,7 @@ function generate3WComponent(config,data,geom,map){
             })
             .xAxis().ticks(5);    
     
-    statusChart.width($('#rc-3W-status').width()).height(300)
+    /*statusChart.width($('#rc-3W-status').width()).height(250)
             .dimension(statusDimension)
             .group(statusGroup)
             .elasticX(true)
@@ -229,14 +230,14 @@ function generate3WComponent(config,data,geom,map){
             .label(function(d){
                 return d.key +' ('+d.value+')';
             })            
-            .xAxis().ticks(5);
+            .xAxis().ticks(5);*/
 
-    districtlevelChart.width($('#rc-3W-districtlevel').width()).height(100)
+    districtlevelChart.width($('#rc-3W-districtlevel').width()).height(250)
             .dimension(districtlevelDimension)
             .group(districtlevelGroup)
             .colors(config.colors2)
             .colorDomain([0, 4])
-            .colorAccessor(function(d, i){return i;});           
+            .colorAccessor(function(d, i){return i*4;});           
 
     dc.dataCount('#count-info')
             .dimension(cf)
@@ -266,11 +267,11 @@ function generate3WComponent(config,data,geom,map){
             .colorDomain([0, 5])
             .colorAccessor(function (d) {
                 var c=0;
-                if(d>9){
+                if(d>3){
                     c=5;
-                } else if (d>4) {
-                    c=4;
                 } else if (d>2) {
+                    c=4;
+                } else if (d>1) {
                     c=3;
                 } else if (d>0) {
                     c=2;
@@ -377,7 +378,7 @@ function stripIfNull(input){
 }
 
 function loadDatatable(){
-    var activityurl = 'http://beta.proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/pub%3Fgid%3D0%26single%3Dtrue%26output%3Dcsv&strip-headers=on&format=html&filter01=cut&cut-include-tags01=adm3%2Bcode%2Creached%2Bhouseholds%2Cactivity%2Bdescription&cut-exclude-tags01=&filter02=count&count-tags02=%23adm3%2Bcode%2C%23activity%2Bdescription&count-aggregate-tag02=%23reached%2Bhouseholds&filter03=&filter04=&filter05=&filter06=&filter07=';
+    var activityurl = 'http://proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1c6QITgxyF0qNs3Kk_7g_04kOwZ9w2stc09pWTupuBm8/edit%23gid%3D0&strip-headers=on&format=html&filter01=count&count-tags01=sector%2Cadm3%2Bcode&count-aggregate-tag01=%23sector&filter02=&filter03=&filter04=&filter05=&filter06=&filter07=';
     var damageurl ='http://beta.proxy.hxlstandard.org/data.json?filter_count=7&strip-headers=on&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/pub%3Fgid%3D975313202%26single%3Dtrue%26output%3Dcsv&format=html';
 
     var activityCall = $.ajax({ 
@@ -400,12 +401,22 @@ function loadDatatable(){
     $.when(damageCall, activityCall).then(function(damageArgs, activityArgs){
         var damage = hxlProxyToJSON(damageArgs[0]);
         var activitycf = crossfilter(hxlProxyToJSON(activityArgs[0]));
-        var activityDimension = activitycf.dimension(function(d){return d['#activity+description'];});
+        var activityDimension = activitycf.dimension(function(d){return d['#sector'];});
         var geoDimension = activitycf.dimension(function(d){ return d['#adm3+code']});
-        var activityGroup = activityDimension.group().reduceSum(function(d){return d['#meta+sum'];});
-        var table = '<table><tr><th></th><th class="number damage">Damage</th>';
+        var activityGroup = activityDimension.group().reduceSum(function(d){return d['#meta+count'];});
+        var geoGroup =geoDimension.group();
+        var table = '<table><tr><th></th><th class="number damage">Damage</th><th class="number damage">Priority</th>';
+
+        var geoList = [];
+
+        geoGroup.top(Infinity).forEach(function(d){
+            if(d.value>0){
+                geoList.push(d.key)
+            }
+        });
+
         var activitylist = [];
-        activityGroup.top(5).forEach(function(d){
+        activityGroup.top(Infinity).forEach(function(d){
             if(d.value>0){
                 activitylist.push(d.key)
                 table+='<th class="number">'+d.key+'</th>';
@@ -413,31 +424,85 @@ function loadDatatable(){
         });
         table +='</tr>';
         
-        
-        geom.features.forEach(function(f){
-            table+='<tr class="datarow adm' + f.properties['HLCIT_CODE'].replace(/ /g,'_') + '"><td>'+f.properties.DISTRICT+'</td>';
-            var damagevalue = 0;
-            damage.forEach(function(d){
-                if(d['#adm3+code']==f.properties['HLCIT_CODE']){
-                    damagevalue = d['#affected+households'];
+        var i = geom.features.length;
+        while (i--) {
+            var code = geom.features[i].properties['HLCIT_CODE'];
+            var found = false;
+            geoList.forEach(function(g){
+                if(g==code){
+                    found = true;
                 }
             })
-            table+='<td class="number damage">'+damagevalue+'</td>';
+            if(found==false){
+                geom.features[i].properties.map='No'
+            } else {
+                geom.features[i].properties.map='Yes'
+            }            
+        }
+    
+        
+        geom.features.forEach(function(f){ 
+        
+            damage.forEach(function(d){
+                if(d['#adm3+code']==f.properties['HLCIT_CODE']){
+                    f.properties.priority = d['#indicator+priority'];
+                }
+            })
 
-            geoDimension.filter(f.properties['HLCIT_CODE']);
-            activitylist.forEach(function(k){
-                var value = 0;
-                activityGroup.top(Infinity).forEach(function(d){
-                    if(d.key==k){
-                        value =d.value;
+            if(f.properties.map=='Yes'){
+                table+='<tr class="datarow adm' + f.properties['HLCIT_CODE'].replace(/ /g,'_') + '"><td>'+f.properties.DISTRICT+'</td>';
+                var damagevalue = 0;
+                damage.forEach(function(d){
+                    if(d['#adm3+code']==f.properties['HLCIT_CODE']){
+                        damagevalue = d['#affected+households'];
+                        priorityvalue = d['#indicator+priority'];
+                        f.properties.priority = d['#indicator+priority'];
                     }
+                })
+                table+='<td class="number damage">'+damagevalue+'</td>';
+                table+='<td class="number damage">'+priorityvalue+'</td>';
+
+                geoDimension.filter(f.properties['HLCIT_CODE']);
+                activitylist.forEach(function(k){
+                    var value = 0;
+                    activityGroup.top(Infinity).forEach(function(d){
+                        if(d.key==k){
+                            value =d.value;
+                        }
+                    });
+                    table +='<td class="number">'+value+'</td>';
                 });
-                table +='<td class="number">'+value+'</td>';
-            });
-            table+='</tr>';
+                table+='</tr>';
+            }
         });
         table +='</table>';
         $('#overviewtable').html(table);
+
+        overlay = L.geoJson(geom,{
+            style: function(f){
+                if(f.properties.map=='Yes'){
+                    if(f.properties.priority=='A'){
+                        var color = '#B71C1C';
+                    } else {
+                        var color = '#FFCDD2';
+                    }                    
+                } else {
+                    if(f.properties.priority=='A'){
+                        var color = '#555555';
+                    } else {
+                        var color = '#eeeeee';
+                    }                                      
+                }
+
+                return {
+                fillColor: color,
+                color: "#7F1416",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.5};
+            },
+            onEachFeature: onEachFeature
+        }).addTo(map);         
     });
 }
 //load 3W data
