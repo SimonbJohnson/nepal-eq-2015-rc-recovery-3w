@@ -2,7 +2,7 @@
 
 var config = {
     title:"Nepal Earthquake Red Cross Recovery Dashboard",
-    description:"Red Cross recovery activity in response to Nepal Earthquakes 2015",
+    description:"Red Cross recovery activity in response to Nepal Earthquakes 2015.  Select a district for more detailed information. At district level you can filter the activities by clicking the graphs and map.",
     data:"data/data.json",
     whoFieldName:"#org+pns",
     whatFieldName:"#sector",
