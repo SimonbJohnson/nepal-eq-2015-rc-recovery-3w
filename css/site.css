@@ -41,8 +41,8 @@
 }
 
 #reset{
-    background-color:#7F1416;
-    border-color:#7F1416;
+    background-color:#B71C1C;
+    border-color:#B71C1C;
     width:60px;
 }
 
@@ -56,7 +56,7 @@
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
-    color:#7F1416;
+    color:#B71C1C;
     font-size:2em;
  }
 
@@ -87,13 +87,13 @@
  }
 
 .btn {
-    background-color:#7F1416;
-    border-color:#7F1416;
+    background-color:#B71C1C;
+    border-color:#B71C1C;
 }
 
 .btn:hover {
-    background-color:#7F1416;
-    border-color:#7F1416;
+    background-color:#B71C1C;
+    border-color:#B71C1C;
  }
 
  #district_name {
@@ -131,9 +131,9 @@ td {
  }
 
  .damage {
-    color:#7F1416;
+    color:#B71C1C;
  }
 
  a {
-    color:#7F1416;
+    color:#B71C1C;
  }
