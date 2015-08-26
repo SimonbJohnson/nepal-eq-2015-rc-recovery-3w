@@ -2,7 +2,7 @@
 
 var config = {
     title:"Nepal Earthquake Red Cross Recovery Dashboard",
-    description:"Red Cross recovery activity in response to Nepal Earthquakes 2015.  Select a district for more detailed information. At district level you can filter the activities by clicking the graphs and map.",
+    description:"Red Cross recovery activity in response to Nepal Earthquakes 2015.  Select a district for more detailed information. At district level you can filter the activities by clicking the graphs and map.  On any screen the help button to the right can be clicked with instructions on how to use that screen.",
     data:"data/data.json",
     whoFieldName:"#org+pns",
     whatFieldName:"#sector",
@@ -56,6 +56,7 @@ function initDash(config,geom){
 
 function onEachFeature(feature, layer) {
     layer.on('click', function (e){
+        toplayer=false;
         if(e.target.feature.properties.map=='Yes'){
             $('#modal').modal('show'); 
             //suspect e.target.feature.properties.DISTRICT will not work on multi-polygons
@@ -315,8 +316,8 @@ function generate3WComponent(config,data,geom,map){
         .attr('class', 'x-axis-label')
         .attr('text-anchor', 'middle')
         .attr('x', $('#rc-3W-who').width()/2)
-        .attr('y', 748)
-        .text('Households Reached');
+        .attr('y', 248)
+        .text('Activities');
 
     var g = d3.selectAll('#rc-3W-what').select('svg').append('g');
     
@@ -324,17 +325,8 @@ function generate3WComponent(config,data,geom,map){
         .attr('class', 'x-axis-label')
         .attr('text-anchor', 'middle')
         .attr('x', $('#rc-3W-what').width()/2)
-        .attr('y', 298)
-        .text('Households Reached');
-
-    var g = d3.selectAll('#rc-3W-status').select('svg').append('g');
-    
-    g.append('text')
-        .attr('class', 'x-axis-label')
-        .attr('text-anchor', 'middle')
-        .attr('x', $('#rc-3W-status').width()/2)
-        .attr('y', 298)
-        .text('Households Reached');        
+        .attr('y', 248)
+        .text('Activities');      
 
 }
 
@@ -512,8 +504,56 @@ var data;
 var dcGeoLayer = '';
 var geom = topojson.feature(nepal_adm3,nepal_adm3.objects.nepal_adm3);
 var overlay;
+var toplayer=true;
 geom.features.forEach(function(e){
     e.properties[config.joinAttribute] = String(e.properties[config.joinAttribute]); 
 });
 $('#info_row').hide();
+$('#intro').click(function(){
+    var intro = introJs();
+    if(toplayer==true){
+        intro.setOptions({
+            steps: [
+              {
+                element: '#overviewtable',
+                intro: "This table gives an overview of the activities happening in a district."
+              },
+              {
+                element: '#rc-3W-where',
+                intro: "District in red can be clicked for more information.",
+              },
+            ]
+        });
+    } else {
+        intro.setOptions({
+            steps: [
+              {
+                element: '#rc-3W-where',
+                intro: "The map shows the VDCs being worked in.  Be aware that some activities are stated at district level and are therefore no shown on the map.  A VDC can be selected to see what activities are happening there."
+              },
+                            {
+                element: '#charts',
+                intro: "All of the charts are interactive.  Clicking a section of the chart filters for that label.  The other charts and the map will be redrawn showing data for just that selection. The current filters applied to a chart are shown above it.",
+              },
+              {
+                element: '#rc-3W-what',
+                intro: "This graphs show what activites are happening in the district. If a VDC is selected it show what activities are happening in the VDC. A bar can be clicked such as Shelter and the other graphs change to show who is doing the shelter activity and the map will change to show where the shelter activity is happening.",
+              },
+              {
+                element: '#rc-3W-districtlevel',
+                intro: "Some RC Societies have not declared which VDCs within a district they are working in. Therefore they are not shown on the map.  Clicking 'No' on this piechart selects these activities.",
+              },
+              {
+                element: '#rc-3W-who',
+                intro: "This chart shows the RC societies working in the district.  A society can be select to just see their work.",
+              },
+              {
+                element: '#info_row',
+                intro: "This area contains a reset button.  Pressing it resets the dashboard.  If you filter the map or a chart a button will appear here the clears all the filters.  The record count shows how many records are current being shown out of the total possible for the district.",
+              },              
+            ]
+        });
+    }        
+    intro.start();
+});
 initDash(config,geom);

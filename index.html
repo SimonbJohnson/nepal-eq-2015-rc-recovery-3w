@@ -7,6 +7,7 @@
         <link rel="stylesheet" type="text/css" href="css/dc.css"/>
         <link rel="stylesheet" type="text/css" href="css/leaflet.css"/>
         <link rel="stylesheet" type="text/css" href="css/site.css"/>
+        <link rel="stylesheet" type="text/css" href="css/introjs.css"/>
         <script src="js/jquery-2.1.4.min.js"></script>
         <script src="js/d3.min.js"></script>
         <script src="js/crossfilter.v1.min.js"></script>
@@ -17,6 +18,7 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="data/nepal_adm3.js"></script>
         <script src="js/tile.stamen.js"></script>
+        <script src="js/intro.js"></script>
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-46399763-1']);
@@ -34,12 +36,15 @@
                 <div class="row">
                     <div class="col-sm-8">  
                         <h2 id="title"></h2>
-                    </div>                                          
+                    </div>                                                              
                 </div>
                 <div id="header" class="row margintop20">
-                    <div class="col-sm-12">  
+                    <div class="col-sm-10">  
                         <p id="description"></p>
-                    </div>                                                                  
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="intro" class="btn btn-primary btn-sm">Help</button>
+                    </div>                                                                                       
                 </div>
                 <div id="info_row" class="row">
                     <div class="col-sm-5">
@@ -47,7 +52,7 @@
                     </div>
                     <div class="col-sm-2">
                         <a class="reset btn btn-primary btn-sm" href="">Reset Dashboard</a>
-                    </div> 
+                    </div>                     
                     <div class="col-sm-2">
                         <a id="clearfilters" class="reset btn btn-primary btn-sm" href="javascript:dc.filterAll();dc.redrawAll();">Clear Filters</a>
                     </div> 
@@ -56,26 +61,26 @@
                     </div>                                                           
                 </div>              
                 <div class="row margintop20">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <p>Map | Current filter: <span id="mapfilter"></span></span></p>
-                                    <div class="rc-3w-viz" id="rc-3W-where"></div>
-                                </div>
-                            </div>
-                            <div id="overviewtable" class="row margintop20">
-                                <h2>Loading...</h2>
-                            </div>
-                            <div class="row margintop20 heightfixed">                                          
-                                <div class="col-sm-4">
-                                    <div id="rc-3W-what" class="rc-3w-viz"></div>                                
-                                </div>                                                 
-                                <div class="col-sm-4">                                          
-                                    <div class="rc-3w-viz" id="rc-3W-districtlevel"></div>                              
-                                </div>
-                                <div class="col-sm-4">                       
-                                    <div id="rc-3W-who" class="rc-3w-viz"></div>                                
-                                </div>                                                                 
-                            </div>                                                                                        
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <p>Map | Current filter: <span id="mapfilter"></span></span></p>
+                            <div class="rc-3w-viz" id="rc-3W-where"></div>
+                        </div>
+                    </div>
+                    <div id="overviewtable" class="row margintop20">
+                        <h2>Loading...</h2>
+                    </div>
+                    <div id='charts' class="row margintop20 heightfixed">                                          
+                        <div class="col-sm-4">
+                            <div id="rc-3W-what" class="rc-3w-viz"></div>                                
+                        </div>                                                 
+                        <div class="col-sm-4">                                          
+                        <div class="rc-3w-viz" id="rc-3W-districtlevel"></div>                              
+                        </div>
+                        <div class="col-sm-4">                       
+                            <div id="rc-3W-who" class="rc-3w-viz"></div>                                
+                        </div>                                                                 
+                    </div>                                                                                        
                 </div>                                       
         </div>
         <div id="modal" class="modal fade" role="dialog">
