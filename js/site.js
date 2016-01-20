@@ -62,7 +62,7 @@ function onEachFeature(feature, layer) {
             //suspect e.target.feature.properties.DISTRICT will not work on multi-polygons
             $('#district_name').html(e.target.feature.properties.DISTRICT);
             //var url = 'http://beta.proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/export%3Fformat%3Dcsv%26id%3D1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA%26gid%3D0&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23adm3%2Bcode%2C%23adm4%2Bcode%2C%23org%2Bimplementing%2C%23activity%2Bdescription%2C%23status%2C%23reached%2Buse%2C%23indicator&cut-exclude-tags01=&filter02=select&force=1&select-query02-01=adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE
-            var url = 'http://proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1c6QITgxyF0qNs3Kk_7g_04kOwZ9w2stc09pWTupuBm8/edit%23gid%3D0&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23indicator%2Bpriority%2C%23sector%2C%23adm3%2Bcode%2C%23indicator%2Bconfirmedvdc%2C%23adm4%2Bcode%2C%23org%2Bpns&cut-exclude-tags01=&filter02=select&select-query02-01=%23adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE;
+            var url = 'https://proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1c6QITgxyF0qNs3Kk_7g_04kOwZ9w2stc09pWTupuBm8/edit%23gid%3D0&strip-headers=on&format=html&filter01=cut&cut-include-tags01=%23indicator%2Bpriority%2C%23sector%2C%23adm3%2Bcode%2C%23indicator%2Bconfirmedvdc%2C%23adm4%2Bcode%2C%23org%2Bpns&cut-exclude-tags01=&filter02=select&select-query02-01=%23adm3%2Bcode%3D'+e.target.feature.properties.HLCIT_CODE;
             var dataCall = $.ajax({ 
                 type: 'GET', 
                 url: url, 
@@ -370,8 +370,8 @@ function stripIfNull(input){
 }
 
 function loadDatatable(){
-    var activityurl = 'http://proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1c6QITgxyF0qNs3Kk_7g_04kOwZ9w2stc09pWTupuBm8/edit%23gid%3D0&strip-headers=on&format=html&filter01=count&count-tags01=sector%2Cadm3%2Bcode&count-aggregate-tag01=%23sector&filter02=&filter03=&filter04=&filter05=&filter06=&filter07=';
-    var damageurl ='http://beta.proxy.hxlstandard.org/data.json?filter_count=7&strip-headers=on&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/pub%3Fgid%3D975313202%26single%3Dtrue%26output%3Dcsv&format=html';
+    var activityurl = 'https://proxy.hxlstandard.org/data.json?filter_count=7&url=https%3A//docs.google.com/spreadsheets/d/1c6QITgxyF0qNs3Kk_7g_04kOwZ9w2stc09pWTupuBm8/edit%23gid%3D0&strip-headers=on&format=html&filter01=count&count-tags01=sector%2Cadm3%2Bcode&count-aggregate-tag01=%23sector&filter02=&filter03=&filter04=&filter05=&filter06=&filter07=';
+    var damageurl ='https://beta.proxy.hxlstandard.org/data.json?filter_count=7&strip-headers=on&url=https%3A//docs.google.com/spreadsheets/d/1Z4YWDKWnrSJPcyFEyHawRck0SrXg6R0hBriH7gBZuqA/pub%3Fgid%3D975313202%26single%3Dtrue%26output%3Dcsv&format=html';
 
     var activityCall = $.ajax({ 
             type: 'GET', 
